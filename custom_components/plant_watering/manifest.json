@@ -1,11 +1,11 @@
 {
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/OWNER/plant-watering",
+  "documentation": "https://github.com/siberiaodens/plant-watering-homeassistant",
   "domain": "plant_watering",
   "integration_type": "hub",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/OWNER/plant-watering/issues",
+  "issue_tracker": "https://github.com/siberiaodens/plant-watering-homeassistant/issues",
   "name": "Plant Watering",
   "version": "0.1.0"
 }
