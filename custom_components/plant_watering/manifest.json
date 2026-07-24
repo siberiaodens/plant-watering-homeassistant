@@ -1,0 +1,11 @@
+{
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/OWNER/plant-watering",
+  "domain": "plant_watering",
+  "integration_type": "hub",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/OWNER/plant-watering/issues",
+  "name": "Plant Watering",
+  "version": "0.1.0"
+}

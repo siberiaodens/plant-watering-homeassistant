@@ -1,0 +1,18 @@
+{
+  "title": "Plant Watering",
+  "config": {"step": {"user": {"title": "Add plant", "description": "Set watering intervals and amounts for each season.", "data": {
+    "plant_name": "Plant name", "icon": "Icon", "temperature_entity": "Temperature sensor (optional)",
+    "interval_spring": "Spring: interval", "water_spring": "Spring: amount", "interval_summer": "Summer: interval", "water_summer": "Summer: amount",
+    "interval_autumn": "Autumn: interval", "water_autumn": "Autumn: amount", "interval_winter": "Winter: interval", "water_winter": "Winter: amount"
+  }}}},
+  "options": {"step": {"init": {"title": "Edit plant", "data": {
+    "plant_name": "Plant name", "icon": "Icon", "temperature_entity": "Temperature sensor (optional)",
+    "interval_spring": "Spring: interval", "water_spring": "Spring: amount", "interval_summer": "Summer: interval", "water_summer": "Summer: amount",
+    "interval_autumn": "Autumn: interval", "water_autumn": "Autumn: amount", "interval_winter": "Winter: interval", "water_winter": "Winter: amount"
+  }}}},
+  "entity": {
+    "sensor": {"status": {"name": "Watering status", "state": {"unknown": "Never watered", "due": "Water today", "tomorrow": "Water tomorrow", "ok": "Not due"}}, "current_interval": {"name": "Current interval"}, "current_water": {"name": "Current amount"}},
+    "number": {"interval_spring": {"name": "Spring interval"}, "water_spring": {"name": "Spring amount"}, "interval_summer": {"name": "Summer interval"}, "water_summer": {"name": "Summer amount"}, "interval_autumn": {"name": "Autumn interval"}, "water_autumn": {"name": "Autumn amount"}, "interval_winter": {"name": "Winter interval"}, "water_winter": {"name": "Winter amount"}},
+    "datetime": {"last_watered": {"name": "Last watered"}}, "button": {"water_now": {"name": "Watered now"}}
+  }
+}

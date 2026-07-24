@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pflanze anlegen",
+        "description": "Lege Gießintervalle und Wassermengen für jede Saison fest.",
+        "data": {
+          "plant_name": "Pflanzenname",
+          "icon": "Symbol",
+          "temperature_entity": "Temperatursensor (optional)",
+          "interval_spring": "Frühling: Intervall",
+          "water_spring": "Frühling: Wassermenge",
+          "interval_summer": "Sommer: Intervall",
+          "water_summer": "Sommer: Wassermenge",
+          "interval_autumn": "Herbst: Intervall",
+          "water_autumn": "Herbst: Wassermenge",
+          "interval_winter": "Winter: Intervall",
+          "water_winter": "Winter: Wassermenge"
+        }
+      }
+    }
+  },
+  "options": {"step": {"init": {"title": "Pflanze bearbeiten", "data": {
+    "plant_name": "Pflanzenname", "icon": "Symbol", "temperature_entity": "Temperatursensor (optional)",
+    "interval_spring": "Frühling: Intervall", "water_spring": "Frühling: Wassermenge", "interval_summer": "Sommer: Intervall", "water_summer": "Sommer: Wassermenge",
+    "interval_autumn": "Herbst: Intervall", "water_autumn": "Herbst: Wassermenge", "interval_winter": "Winter: Intervall", "water_winter": "Winter: Wassermenge"
+  }}}},
+  "entity": {
+    "sensor": {"status": {"name": "Gießstatus", "state": {"unknown": "Noch nie gegossen", "due": "Heute gießen", "tomorrow": "Morgen gießen", "ok": "Nicht fällig"}}, "current_interval": {"name": "Aktuelles Intervall"}, "current_water": {"name": "Aktuelle Wassermenge"}},
+    "number": {
+      "interval_spring": {"name": "Intervall Frühling"}, "water_spring": {"name": "Wassermenge Frühling"}, "interval_summer": {"name": "Intervall Sommer"}, "water_summer": {"name": "Wassermenge Sommer"},
+      "interval_autumn": {"name": "Intervall Herbst"}, "water_autumn": {"name": "Wassermenge Herbst"}, "interval_winter": {"name": "Intervall Winter"}, "water_winter": {"name": "Wassermenge Winter"}
+    },
+    "datetime": {"last_watered": {"name": "Zuletzt gegossen"}},
+    "button": {"water_now": {"name": "Jetzt gegossen"}}
+  }
+}
