@@ -9,10 +9,17 @@ from .entity import PlantEntity
 
 async def async_setup_entry(hass, entry, async_add_entities):
     plant = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([SeasonNumber(entry, plant, season, kind) for season in SEASONS for kind in ("interval", "water")])
+    async_add_entities(
+        [
+            SeasonNumber(entry, plant, season, kind)
+            for season in SEASONS
+            for kind in ("interval", "water")
+        ]
+    )
 
 
 class SeasonNumber(PlantEntity, NumberEntity):
+    entity_domain = "number"
     _attr_mode = NumberMode.BOX
 
     def __init__(self, entry, plant, season, kind):

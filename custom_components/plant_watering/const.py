@@ -11,9 +11,9 @@ CONF_WATER_PREFIX = "water_"
 
 SEASONS = ("spring", "summer", "autumn", "winter")
 SEASON_NAMES = {
-    "spring": "Frühling",
-    "summer": "Sommer",
-    "autumn": "Herbst",
+    "spring": "Spring",
+    "summer": "Summer",
+    "autumn": "Autumn",
     "winter": "Winter",
 }
 
@@ -30,3 +30,4 @@ DEFAULTS = {
 
 STORE_VERSION = 1
 UPDATE_INTERVAL_MINUTES = 15
+SIGNAL_PLANTS_UPDATED = f"{DOMAIN}_plants_updated"

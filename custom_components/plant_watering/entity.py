@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
-from homeassistant.util import dt as dt_util
+from homeassistant.util import dt as dt_util, slugify
 
 from .const import (
     CONF_ICON,
@@ -21,24 +21,67 @@ from .const import (
 
 
 def season_at(value: datetime) -> str:
-    return {12: "winter", 1: "winter", 2: "winter", 3: "spring", 4: "spring", 5: "spring", 6: "summer", 7: "summer", 8: "summer", 9: "autumn", 10: "autumn", 11: "autumn"}[value.month]
+    return {
+        12: "winter",
+        1: "winter",
+        2: "winter",
+        3: "spring",
+        4: "spring",
+        5: "spring",
+        6: "summer",
+        7: "summer",
+        8: "summer",
+        9: "autumn",
+        10: "autumn",
+        11: "autumn",
+    }[value.month]
+
+
+def watering_status(
+    last_watered: datetime | None,
+    interval_days: int,
+    now: datetime,
+) -> str:
+    """Return the technical watering status for a plant."""
+    if last_watered is None:
+        return "unknown"
+
+    next_watering = last_watered + timedelta(days=interval_days)
+    remaining = next_watering - now
+    if remaining.total_seconds() <= 0:
+        watered_today = (
+            dt_util.as_local(last_watered).date()
+            == dt_util.as_local(now).date()
+        )
+        if interval_days == 0 and watered_today:
+            return "due_again"
+        return "due"
+    if remaining <= timedelta(hours=24):
+        return "tomorrow"
+    return "ok"
 
 
 class PlantEntity(Entity):
     _attr_has_entity_name = True
+    entity_domain: str
 
     def __init__(self, entry: ConfigEntry, plant) -> None:
         self.entry = entry
         self.plant = plant
         self._attr_unique_id = f"{entry.entry_id}_{self.key}"
+        self.entity_id = (
+            f"{self.entity_domain}."
+            f"{slugify(self.config[CONF_PLANT_NAME])}_{self.key}"
+        )
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=self.config[CONF_PLANT_NAME],
             manufacturer="Plant Watering",
-            model="Pflanze",
+            model="Plant",
         )
 
     async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
         self.async_on_remove(self.plant.add_listener(self.async_write_ha_state))
 
     @property
@@ -71,7 +114,7 @@ class PlantEntity(Entity):
     @property
     def active_interval(self) -> int:
         base = int(self.config[f"{CONF_INTERVAL_PREFIX}{self.current_season}"])
-        return max(1, base - self.heat_reduction)
+        return max(0, base - self.heat_reduction)
 
     @property
     def active_water(self) -> int:
@@ -85,15 +128,11 @@ class PlantEntity(Entity):
 
     @property
     def status(self) -> str:
-        next_time = self.next_watering
-        if next_time is None:
-            return "unknown"
-        remaining = next_time - dt_util.now()
-        if remaining.total_seconds() <= 0:
-            return "due"
-        if remaining <= timedelta(hours=24):
-            return "tomorrow"
-        return "ok"
+        return watering_status(
+            self.plant.last_watered,
+            self.active_interval,
+            dt_util.now(),
+        )
 
     @property
     def common_attributes(self) -> dict:

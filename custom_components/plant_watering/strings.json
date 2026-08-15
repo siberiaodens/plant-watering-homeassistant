@@ -11,7 +11,13 @@
     "interval_autumn": "Autumn: interval", "water_autumn": "Autumn: amount", "interval_winter": "Winter: interval", "water_winter": "Winter: amount"
   }}}},
   "entity": {
-    "sensor": {"status": {"name": "Watering status", "state": {"unknown": "Never watered", "due": "Water today", "tomorrow": "Water tomorrow", "ok": "Not due"}}, "current_interval": {"name": "Current interval"}, "current_water": {"name": "Current amount"}},
+    "sensor": {
+      "status": {"name": "Watering status", "state": {"unknown": "Never watered", "due": "Water today", "due_again": "Water again today", "tomorrow": "Water tomorrow", "ok": "Not due"}},
+      "current_interval": {"name": "Current interval"},
+      "current_water": {"name": "Current amount"},
+      "overview_status": {"name": "Plant Watering Status"},
+      "watering_plan": {"name": "Plant Watering Plan", "state": {"ready": "Ready"}}
+    },
     "number": {"interval_spring": {"name": "Spring interval"}, "water_spring": {"name": "Spring amount"}, "interval_summer": {"name": "Summer interval"}, "water_summer": {"name": "Summer amount"}, "interval_autumn": {"name": "Autumn interval"}, "water_autumn": {"name": "Autumn amount"}, "interval_winter": {"name": "Winter interval"}, "water_winter": {"name": "Winter amount"}},
     "datetime": {"last_watered": {"name": "Last watered"}}, "button": {"water_now": {"name": "Watered now"}}
   }

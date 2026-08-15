@@ -12,6 +12,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class WaterNowButton(PlantEntity, ButtonEntity):
+    entity_domain = "button"
     key = "water_now"
     _attr_translation_key = "water_now"
     _attr_icon = "mdi:watering-can"

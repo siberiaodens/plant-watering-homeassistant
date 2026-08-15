@@ -6,6 +6,8 @@ import uuid
 
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.const import UnitOfTime, UnitOfVolume
+from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
@@ -36,17 +38,33 @@ def _schema(defaults: dict, include_name: bool = True) -> vol.Schema:
     for season in SEASONS:
         interval = f"{CONF_INTERVAL_PREFIX}{season}"
         water = f"{CONF_WATER_PREFIX}{season}"
-        fields[vol.Required(interval, default=defaults.get(interval, DEFAULTS[interval]))] = selector.NumberSelector(
-            selector.NumberSelectorConfig(min=1, max=365, step=1, mode=selector.NumberSelectorMode.BOX, unit_of_measurement="Tage")
+        fields[
+            vol.Required(interval, default=defaults.get(interval, DEFAULTS[interval]))
+        ] = selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=1,
+                max=365,
+                step=1,
+                mode=selector.NumberSelectorMode.BOX,
+                unit_of_measurement=UnitOfTime.DAYS,
+            )
         )
-        fields[vol.Required(water, default=defaults.get(water, DEFAULTS[water]))] = selector.NumberSelector(
-            selector.NumberSelectorConfig(min=0, max=10000, step=10, mode=selector.NumberSelectorMode.BOX, unit_of_measurement="ml")
+        fields[
+            vol.Required(water, default=defaults.get(water, DEFAULTS[water]))
+        ] = selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0,
+                max=10000,
+                step=10,
+                mode=selector.NumberSelectorMode.BOX,
+                unit_of_measurement=UnitOfVolume.MILLILITERS,
+            )
         )
     return vol.Schema(fields)
 
 
 class PlantWateringConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(self, user_input=None):
         if user_input is not None:
@@ -55,18 +73,17 @@ class PlantWateringConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=_schema({}))
 
     @staticmethod
+    @callback
     def async_get_options_flow(config_entry):
-        return PlantWateringOptionsFlow(config_entry)
+        return PlantWateringOptionsFlow()
 
 
 class PlantWateringOptionsFlow(config_entries.OptionsFlow):
-    def __init__(self, config_entry):
-        self.config_entry = config_entry
-
     async def async_step_init(self, user_input=None):
         current = {**self.config_entry.data, **self.config_entry.options}
         if user_input is not None:
             name = user_input.pop(CONF_PLANT_NAME)
+            user_input.setdefault(CONF_TEMPERATURE_ENTITY, None)
             self.hass.config_entries.async_update_entry(self.config_entry, title=name)
             user_input[CONF_PLANT_NAME] = name
             return self.async_create_entry(title="", data=user_input)

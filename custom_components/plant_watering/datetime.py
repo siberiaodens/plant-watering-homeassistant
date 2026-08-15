@@ -12,6 +12,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class LastWateredEntity(PlantEntity, DateTimeEntity):
+    entity_domain = "datetime"
     key = "last_watered"
     _attr_translation_key = "last_watered"
     _attr_icon = "mdi:calendar-check"
