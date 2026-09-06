@@ -32,7 +32,7 @@ from .const import (
     SIGNAL_PLANTS_UPDATED,
     UPDATE_INTERVAL_MINUTES,
 )
-from .entity import PlantEntity, season_at, watering_status
+from .entity import PlantEntity, next_watering_at, season_at, watering_status
 
 DUE_STATUSES = ("due", "due_again", "unknown")
 
@@ -149,11 +149,7 @@ def _snapshot(hass: HomeAssistant, entry: ConfigEntry, plant: Any) -> dict[str, 
     }
     water = {item: int(config[f"{CONF_WATER_PREFIX}{item}"]) for item in SEASONS}
     active_interval = max(0, intervals[season] - heat_reduction)
-    next_watering = (
-        plant.last_watered + timedelta(days=active_interval)
-        if plant.last_watered
-        else None
-    )
+    next_watering = next_watering_at(plant.last_watered, active_interval)
     status = watering_status(plant.last_watered, active_interval, now)
 
     return {

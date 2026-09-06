@@ -46,19 +46,34 @@ def watering_status(
     if last_watered is None:
         return "unknown"
 
-    next_watering = last_watered + timedelta(days=interval_days)
-    remaining = next_watering - now
-    if remaining.total_seconds() <= 0:
-        watered_today = (
-            dt_util.as_local(last_watered).date()
-            == dt_util.as_local(now).date()
-        )
+    local_last_watered = dt_util.as_local(last_watered)
+    local_now = dt_util.as_local(now)
+    next_watering = next_watering_at(last_watered, interval_days)
+    assert next_watering is not None
+    if next_watering.date() <= local_now.date():
+        watered_today = local_last_watered.date() == local_now.date()
         if interval_days == 0 and watered_today:
             return "due_again"
         return "due"
-    if remaining <= timedelta(hours=24):
+    if next_watering.date() == local_now.date() + timedelta(days=1):
         return "tomorrow"
     return "ok"
+
+
+def next_watering_at(
+    last_watered: datetime | None,
+    interval_days: int,
+) -> datetime | None:
+    """Return the local start of the calendar day when watering is due."""
+    if last_watered is None:
+        return None
+
+    return dt_util.as_local(last_watered).replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    ) + timedelta(days=interval_days)
 
 
 class PlantEntity(Entity):
@@ -122,9 +137,10 @@ class PlantEntity(Entity):
 
     @property
     def next_watering(self) -> datetime | None:
-        if self.plant.last_watered is None:
-            return None
-        return self.plant.last_watered + timedelta(days=self.active_interval)
+        return next_watering_at(
+            self.plant.last_watered,
+            self.active_interval,
+        )
 
     @property
     def status(self) -> str:

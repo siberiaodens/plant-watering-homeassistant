@@ -16,6 +16,8 @@ Plant Watering is a HACS custom integration that represents every plant as a Hom
 
 Meteorological seasons change automatically on the first day of March, June, September, and December.
 
+Watering intervals use local calendar days rather than elapsed 24-hour periods. If a plant with a one-day interval is marked as watered at 16:00, it becomes due at 00:00 on the following local day. The exact watering timestamp is still stored and exposed for informational purposes.
+
 Configured seasonal intervals always remain at least one day. Heat adjustment is applied only to the effective interval and may reduce it to zero days. For example, if a plant has a summer interval of one day and the temperature reaches 28 °C, watering it in the morning does not postpone it until the next day: it receives the `due_again` status and becomes due again on the same day.
 
 ## Language model
@@ -75,7 +77,7 @@ Automations can react directly to `sensor.<plant>_status`. Its technical states 
 - `unknown`: the plant has never been marked as watered
 - `due`: watering is due now
 - `due_again`: the plant was watered today but is due again because its effective interval is zero days
-- `tomorrow`: watering is due within 24 hours
+- `tomorrow`: watering is due on the following local calendar day
 - `ok`: watering is not due yet
 
 ### Translated states in dashboard templates
