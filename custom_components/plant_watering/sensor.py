@@ -8,7 +8,7 @@ from typing import Any
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTime, UnitOfVolume
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
@@ -47,9 +47,16 @@ async def async_setup_entry(hass, entry, async_add_entities):
     if hass.data[DOMAIN].get("overview_owner") == entry.entry_id:
         entities.extend([OverviewStatusSensor(), WateringPlanSensor()])
     async_add_entities(entities)
+
+    @callback
+    def _async_refresh_sensors(_now) -> None:
+        """Refresh time-dependent state on the Home Assistant event loop."""
+        for entity in entities:
+            entity.async_write_ha_state()
+
     cancel = async_track_time_interval(
         hass,
-        lambda now: [entity.async_write_ha_state() for entity in entities],
+        _async_refresh_sensors,
         timedelta(minutes=UPDATE_INTERVAL_MINUTES),
     )
     entry.async_on_unload(cancel)
@@ -57,6 +64,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     config = {**entry.data, **entry.options}
     temperature_entity = config.get(CONF_TEMPERATURE_ENTITY)
     if temperature_entity:
+        @callback
         def _handle_temperature_change(_event) -> None:
             for entity in entities:
                 entity.async_write_ha_state()
